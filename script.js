@@ -89,25 +89,56 @@
 }
 
         function handleSubmit(event) {
-            event.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const message = document.getElementById('message').value;
-            
-            // Simulate form submission
-            const btn = event.target.querySelector('.btn');
-            const originalText = btn.textContent;
-            btn.textContent = 'Sending...';
-            btn.disabled = true;
-            
-            setTimeout(() => {
-                alert(`Thank you, ${name}! Your message has been received. We'll get back to you at ${email} soon!`);
-                event.target.reset();
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }, 2000);
-        }
 
+    event.preventDefault();
+
+    const btn = event.target.querySelector("button");
+
+    const originalText = btn.innerHTML;
+
+    btn.disabled = true;
+    btn.innerHTML = "Sending...";
+
+    const templateParams = {
+
+        from_name: document.getElementById("name").value,
+
+        from_email: document.getElementById("email").value,
+
+        message: document.getElementById("message").value
+
+    };
+
+    emailjs.send(
+    "service_n21livg",
+    "template_3q2bujm",
+    templateParams
+)
+    .then(() => {
+
+        alert("✅ Thank you! Your message has been sent successfully.");
+
+        event.target.reset();
+
+    })
+    .catch((error) => {
+
+    console.log("Status:", error.status);
+    console.log("Text:", error.text);
+    console.log("Full Error:", JSON.stringify(error, null, 2));
+
+    alert("❌ Failed to send message.");
+
+})
+    .finally(() => {
+
+        btn.disabled = false;
+
+        btn.innerHTML = originalText;
+
+    });
+
+}
         // Add some interactive hover effects
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('mouseenter', function() {
@@ -145,24 +176,17 @@
         });
 
         // Add parallax effect to header and mouse movement effects
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const header = document.querySelector('.header');
-            const cards = document.querySelectorAll('.card');
-            
-            header.style.transform = `translateY(${scrolled * 0.3}px)`;
-            
-            // Add scroll-based animations to cards
-            cards.forEach((card, index) => {
-                const rect = card.getBoundingClientRect();
-                const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-                
-                if (isVisible) {
-                    const progress = 1 - (rect.top / window.innerHeight);
-                    card.style.transform = `translateY(${(1 - progress) * 20}px)`;
-                }
-            });
-        });
+window.addEventListener("scroll", () => {
+
+    const header = document.querySelector(".header");
+
+    if(header){
+
+        header.style.transform = `translateY(${window.scrollY * 0.15}px)`;
+
+    }
+
+});
 
         // ================= Scroll To Top =================
 
